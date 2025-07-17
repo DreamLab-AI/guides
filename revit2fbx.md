@@ -406,6 +406,334 @@ For teams requiring true live synchronization:
 - **Unreal Engine Datasmith**: Direct Revit import (bypasses 3ds Max)
 - **D5 Render Sync**: Real-time synchronization option
 
+## Twinmotion Direct Link Workflow
+
+### Overview
+
+Twinmotion for Revit is now included as part of Revit subscriptions, with the Direct Link functionality built directly into Revit 2024. This provides a seamless real-time connection between Revit and Twinmotion without requiring separate plugin installation.
+
+### Workflow Architecture
+
+```mermaid
+graph TB
+    A[Revit 2024 Model] -->|Direct Link| B[Twinmotion 2023.1+]
+    B -->|Auto Sync| C[Real-time Updates]
+    B -->|Export| D[Images/Videos]
+    B -->|Export| E[Interactive Presentations]
+    B -->|Export| F[VR Experiences]
+    
+    A -->|Alternative| G[Export Datasmith File]
+    G -->|Import| B
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#9ff,stroke:#333,stroke-width:2px
+    style C fill:#ff9,stroke:#333,stroke-width:2px
+```
+
+### Setting Up Direct Link (Revit 2024)
+
+There is no need to install the Datasmith plugin on Revit 2024. The functionality is built-in:
+
+1. **Initial Setup**:
+   ```
+   View > Twinmotion > Open in Twinmotion
+   ```
+   - Select "New Project" for first-time setup
+   - Twinmotion launches automatically with direct link established
+
+2. **Synchronization**:
+   ```
+   View > Twinmotion > Direct Link Synchronize
+   ```
+   - Updates the Twinmotion project file direct link with all recent changes from the Revit model, based on the active Revit 3D view
+
+3. **Export Options**:
+   ```
+   View > Twinmotion > Export
+   View > Twinmotion > Export Settings
+   View > Twinmotion > Export Messages
+   ```
+
+### Compatibility Matrix
+
+The version of Unreal Datasmith plugin installed is what determines the compatibility between versions of Revit and Twinmotion:
+
+| Revit Version | Twinmotion Version | Datasmith Version | Plugin Type |
+|---------------|-------------------|-------------------|-------------|
+| 2024+ | 2023.1+ | Built-in | Integrated |
+| 2023 | 2022.2.3 - 2023.1 | UE 5.1.1 | Plugin |
+| 2022 | 2021.1.4 - 2022.2.3 | UE 5.0.3 | Plugin |
+| 2021 | 2021.1.4 | UE 4.27.2 | Plugin |
+
+### Best Practices for Twinmotion Workflow
+
+#### 1. View Preparation
+- Create dedicated 3D views for visualization
+- The filename of the scene from your design application appears in the Direct Link settings source field
+- Use Section Boxes to control export scope
+- Manage visibility settings before synchronization
+
+#### 2. Material Handling
+- Twinmotion preserves Revit material names and basic properties
+- Twinmotion doesn't support default materials of Revit 2024 - assign custom materials
+- Use Twinmotion's material library for enhanced realism
+- PBR materials can be applied post-import
+
+#### 3. Synchronization Management
+```mermaid
+graph LR
+    A[Revit Changes] -->|Manual Sync| B[Update in Twinmotion]
+    A -->|Auto Sync| C[Automatic Updates]
+    B --> D[Review Changes]
+    C --> D
+    D --> E[Apply Materials/Effects]
+```
+
+#### 4. Texture Management
+A folder named DirectLinkTextures is created on your computer. The textures from the scene in your design application are exported and saved in this folder:
+- Default location: `Users\[username]\Documents\Twinmotion[version]`
+- Can be relocated via Preferences > Settings > Direct Link
+- Maintains texture references for consistency
+
+### Troubleshooting Common Issues
+
+#### Issue: "Twinmotion not installed" Error
+I had to uninstall and reinstall both, Revit and Twinmotion. It's working now
+
+**Solutions**:
+1. Ensure Twinmotion 2023.1+ is installed
+2. Launch Twinmotion manually once before using Direct Link
+3. Check Windows Task Manager for lingering Revit processes
+4. Verify graphics card compatibility
+
+#### Issue: Direct Link Not Updating
+Make sure Twinmotion is pointing to the source file. To do this, click the ellipsis (...) above the file in the dock, and in the menu, select Direct Link settings
+
+**Solutions**:
+1. Verify source file path in Direct Link settings
+2. Use manual synchronization if Auto Sync fails
+3. Check for file naming conflicts
+4. Ensure both applications are running
+
+## Unreal Engine Datasmith Workflow
+
+### Overview
+
+Datasmith provides a more robust pipeline for bringing Revit models directly into Unreal Engine, preserving metadata, materials, and hierarchy. This workflow is ideal for projects requiring:
+- Advanced material customization
+- Blueprint-based interactions
+- High-fidelity architectural visualization
+- Integration with other Unreal Engine features
+
+### Workflow Architecture
+
+```mermaid
+graph TB
+    A[Revit Model] -->|Export| B[.udatasmith File]
+    B -->|Import| C[Unreal Engine]
+    C -->|Process| D[Datasmith Scene Asset]
+    D --> E[Static Meshes]
+    D --> F[Materials]
+    D --> G[Metadata]
+    D --> H[Scene Hierarchy]
+    
+    I[Revit 2024+] -->|Built-in| J[Twinmotion Export]
+    J -->|Alternative Path| B
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style C fill:#9ff,stroke:#333,stroke-width:2px
+    style D fill:#ff9,stroke:#333,stroke-width:2px
+```
+
+### Installation and Setup
+
+#### For Revit 2023 and Earlier
+1. Download Datasmith Exporter from [Unreal Engine Datasmith Plugins](https://www.unrealengine.com/en-US/datasmith/plugins)
+2. Exit your content creation software, and run the installer file to install the exporter plugin
+3. Match plugin version to Unreal Engine version
+
+#### For Revit 2024+
+- For Revit 2024+ functionality is built-in via Twinmotion integration
+- Use Twinmotion ribbon for Datasmith export
+
+### Export Process
+
+#### 1. View Preparation
+You always need to have a 3D View selected and active in Revit in order to export your scene using the Datasmith Exporter plugin
+
+**Best Practices**:
+- Create dedicated export views
+- Use Section Boxes for selective export
+- Apply Visibility/Graphics Overrides
+- Hide non-geometric elements
+
+#### 2. Export Settings
+```
+Datasmith Ribbon > Export 3D View
+```
+
+**Options**:
+- Tessellation Level: 8 (default, matches FBX export quality)
+- Include Linked Models: Yes (if needed)
+- Metadata Export: Configure categories
+
+#### 3. Metadata Configuration
+Use the Add Group and Remove Selected buttons to add or remove metadata that you want to be included with the exported Datasmith scene
+
+**Important**: The metadata categories are defined by Revit and cannot be changed
+
+### Material Translation
+
+#### Supported Material Properties
+Datasmith currently supports translating diffuse maps and colors, Transparency, Cutouts, and Bump settings from Revit into the Unreal Engine Materials
+
+**Material Conversion Table**:
+| Revit Property | Unreal Engine Equivalent |
+|----------------|-------------------------|
+| Diffuse Color | Base Color |
+| Diffuse Map | Base Color Texture |
+| Transparency | Opacity |
+| Cutout | Opacity Mask |
+| Bump | Normal Map |
+| Scale (Real-world) | Texture Coordinate Scale |
+
+**Limitations**:
+- Datasmith does not convert procedural textures, such as Checker, Noise, Tiles, and so on
+- Complex material graphs require manual recreation
+
+### Scene Organization
+
+The Datasmith Exporter plugin creates a hierarchy of parent and child Actors in the Datasmith Scene that is intended to reflect the overall organization of your scene in Revit
+
+**Hierarchy Structure**:
+```
+Datasmith Scene Actor
+├── Level: Ground Floor
+│   ├── Category: Walls
+│   ├── Category: Doors
+│   └── Category: Furniture
+├── Level: Level 1
+│   ├── Category: Walls
+│   └── Category: Windows
+└── Linked Models
+    └── MEP Systems
+```
+
+### Metadata Preservation
+
+Datasmith imports metadata about your Revit objects, and attaches that metadata to the Actor that represents each Revit object inside the Unreal Engine
+
+**Accessing Metadata in Blueprints**:
+```blueprint
+Get Datasmith User Data
+├── Object Name
+├── Element ID
+├── Type Properties
+└── Instance Properties
+```
+
+### Optimization Strategies
+
+#### 1. Geometry Optimization
+- Use Revit's visibility settings to exclude unnecessary geometry
+- Note that when an object crosses the boundaries of the Section Box, such as the walls, floor and furniture in the images below, its geometry is truncated
+- Leverage instancing for repeated elements
+
+#### 2. Material Consolidation
+- Group similar materials in Revit before export
+- Use Unreal's material instance system
+- Create material parameter collections for global adjustments
+
+#### 3. Performance Considerations
+```mermaid
+graph LR
+    A[High Poly Count] -->|Proxy Geometry Tool| B[Optimized Meshes]
+    C[Many Materials] -->|Material Instances| D[Reduced Draw Calls]
+    E[Complex Hierarchy] -->|Actor Merging| F[Simplified Scene]
+```
+
+### Advanced Workflows
+
+#### 1. Batch Export via Dynamo
+Alternatively, you can use Dynamo to batch export Revit views
+
+**Dynamo Script Structure**:
+1. Collect all 3D views
+2. Filter by naming convention
+3. Set active view
+4. Export via Datasmith API
+5. Log results
+
+#### 2. Blueprint Automation
+Create blueprints for:
+- Material switching based on metadata
+- Level-of-detail systems
+- Interactive elements using BIM data
+- Automated scene setup
+
+#### 3. Version Control Integration
+- Store .udatasmith files in version control
+- Track changes between exports
+- Maintain export logs for team coordination
+
+### Troubleshooting
+
+#### Issue: Missing Geometry
+**Causes**:
+- Hidden elements in Revit view
+- Section box clipping
+- Unsupported element types
+
+**Solutions**:
+1. Review 3D view visibility settings
+2. Check section box boundaries
+3. Verify element categories are supported
+
+#### Issue: Material Mismatches
+The problem lies in the Revit to Maya export and conversion step, where the translation of Revit geometry to polygonal mesh is done
+
+**Solutions**:
+1. Use supported material properties only
+2. Manually recreate complex materials
+3. Leverage Unreal's material editor capabilities
+
+#### Issue: Performance Problems
+**Optimization Checklist**:
+- [ ] Enable Nanite for high-poly meshes
+- [ ] Use LODs for distant objects
+- [ ] Implement occlusion culling
+- [ ] Optimize material complexity
+- [ ] Consider HLOD systems
+
+### Comparison: Twinmotion vs Datasmith
+
+| Feature | Twinmotion | Datasmith (Unreal) |
+|---------|------------|-------------------|
+| **Setup Complexity** | Simple | Moderate to Complex |
+| **Real-time Sync** | Yes (Direct Link) | No (File-based) |
+| **Material Quality** | Good | Excellent (Full PBR) |
+| **Customization** | Limited | Extensive |
+| **Learning Curve** | Low | High |
+| **Metadata Access** | Basic | Full |
+| **Output Options** | Images, Videos, VR | Everything + Games |
+| **Performance** | Optimized | Requires Optimization |
+| **Cost** | Included with Revit | Separate License |
+
+### Choosing the Right Workflow
+
+**Use Twinmotion when**:
+- Quick visualization is needed
+- Non-technical users are involved
+- Standard materials are sufficient
+- Real-time collaboration is important
+
+**Use Datasmith/Unreal when**:
+- Maximum visual quality is required
+- Custom interactions are needed
+- Metadata-driven features are important
+- Integration with other systems is planned
+- Advanced rendering features are required
+
 ---
 
-*Document Version: 1.0 | Last Updated: July 2025*
+*Document Version: 2.0 | Last Updated: July 2025*
